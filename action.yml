@@ -1,0 +1,21 @@
+name: 'Merge or PR'
+description: 'Merges branch to target branch or creates new branch and follow-up PR for conflict resolving'
+author: 'Michał Kobiec (mkkc12@gmail.com)'
+branding:
+  icon: 'git-branch' 
+  color: 'green'
+inputs:
+  target_branch:
+    description: 'The name of target branch to merge'
+    required: true
+  sha_to_merge:
+    description: 'Hash to merge. default GITHUB_SHA'
+    required: false
+  github_token:
+    description: 'Github token'
+    required: true
+  merge_branch_name: 
+    decription: 'Name of the merge branch created in case of merge conflict'
+runs:
+  using: 'node12'
+  main: 'dist/index.js'
