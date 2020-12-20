@@ -4392,24 +4392,36 @@ const core = __importStar(__webpack_require__(470));
 const github = __importStar(__webpack_require__(469));
 function mergeOrPr() {
     return __awaiter(this, void 0, void 0, function* () {
-        const myToken = core.getInput('github_token');
-        const headToMerge = core.getInput('sha_to_merge') || github.context.sha;
-        const target = core.getInput('target_branch');
+        const myToken = core.getInput("repo_token");
+        const headToMerge = core.getInput("sha_to_merge") || github.context.sha;
+        const target = core.getInput("target_branch");
         const repo = github.context.repo;
         const octokit = github.getOctokit(myToken);
-        const mergeBranch = core.getInput('merge_branch_name').replace('refs/heads/', '');
+        const mergeBranch = core
+            .getInput("merge_branch_name")
+            .replace("refs/heads/", "");
         let createPr = false;
         try {
-            octokit.repos.merge({ repo: repo.repo, owner: repo.owner, base: target, head: headToMerge });
+            octokit.repos.merge({
+                repo: repo.repo,
+                owner: repo.owner,
+                base: target,
+                head: headToMerge,
+            });
         }
         catch (error) {
-            if (error.name !== 'HttpError' || error.status !== 409) {
+            if (error.name !== "HttpError" || error.status !== 409) {
                 throw Error(error);
             }
             createPr = true;
         }
         if (createPr) {
-            octokit.git.createRef({ repo: repo.repo, owner: repo.owner, sha: headToMerge, ref: `refs/heads/${mergeBranch}` });
+            octokit.git.createRef({
+                repo: repo.repo,
+                owner: repo.owner,
+                sha: headToMerge,
+                ref: `refs/heads/${mergeBranch}`,
+            });
         }
     });
 }
