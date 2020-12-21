@@ -12,7 +12,7 @@ export async function mergeOrPr() {
     .replace("refs/heads/", "");
   let createPr = false;
   try {
-    octokit.repos.merge({
+    await octokit.repos.merge({
       repo: repo.repo,
       owner: repo.owner,
       base: target,
@@ -25,7 +25,7 @@ export async function mergeOrPr() {
     createPr = true;
   }
   if (createPr) {
-    octokit.git.createRef({
+    await octokit.git.createRef({
       repo: repo.repo,
       owner: repo.owner,
       sha: headToMerge,

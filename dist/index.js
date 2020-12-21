@@ -4402,7 +4402,7 @@ function mergeOrPr() {
             .replace("refs/heads/", "");
         let createPr = false;
         try {
-            octokit.repos.merge({
+            yield octokit.repos.merge({
                 repo: repo.repo,
                 owner: repo.owner,
                 base: target,
@@ -4416,7 +4416,7 @@ function mergeOrPr() {
             createPr = true;
         }
         if (createPr) {
-            octokit.git.createRef({
+            yield octokit.git.createRef({
                 repo: repo.repo,
                 owner: repo.owner,
                 sha: headToMerge,
