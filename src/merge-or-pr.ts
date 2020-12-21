@@ -2,7 +2,7 @@ import * as core from "@actions/core";
 import * as github from "@actions/github";
 
 export async function mergeOrPr() {
-  const myToken = core.getInput("github_token");
+  const myToken = core.getInput("repo_token");
   const headToMerge = core.getInput("sha_to_merge") || github.context.sha;
   const target = core.getInput("target_branch");
   const repo = github.context.repo;

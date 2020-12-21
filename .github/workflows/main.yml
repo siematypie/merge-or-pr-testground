@@ -19,13 +19,15 @@ jobs:
 
       # Steps represent a sequence of tasks that will be executed as part of the job
       steps:
+        - uses: actions/checkout@v1
+          name: Checkout
         # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
         - uses: ./
           with:
             target_branch: "target-test"
             sha_to_merge: ${{ github.event.pull_request.head.sha }}
             merge_branch_name: ${{ format('{0}-mergefix', github.event.pull_request.head.ref) }}
-            github_token: ${{ github_token }} 
+            repo_token: ${{ secrets.GITHUB_TOKEN }} 
 
 
 

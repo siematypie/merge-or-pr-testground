@@ -11,7 +11,7 @@ inputs:
   sha_to_merge:
     description: 'Hash to merge. default GITHUB_SHA'
     required: false
-  github_token:
+  repo_token:
     description: 'Github token'
     required: true
   merge_branch_name: 
