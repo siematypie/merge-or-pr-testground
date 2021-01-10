@@ -34,5 +34,5 @@ jobs:
             pr_asignee: ${{ github.event.pull_request.user.login }}
             repo_token: ${{ secrets.GITHUB_TOKEN }} 
         - name: print-output
-          run: "PR created: ${{ steps.merge-or-pr.outputs.PR_CREATED  }} ${{ steps.merge-or-pr.outputs.PR_NUMBER }} ${{ steps.merge-or-pr.outputs.PR_URL }}"
+          run: echo "PR created: ${{ steps.merge-or-pr.outputs.PR_CREATED  }} ${{ steps.merge-or-pr.outputs.PR_NUMBER }} ${{ steps.merge-or-pr.outputs.PR_URL }}"
 
