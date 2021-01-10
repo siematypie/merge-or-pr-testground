@@ -27,7 +27,7 @@ jobs:
           with:
             target_branch: "target-test"
             sha_to_merge: ${{ github.event.pull_request.head.sha }}
-            merge_branch_name: ${{ format('/mergefix/{0}', github.event.pull_request.head.ref) }}
+            merge_branch_name: ${{ format('mergefix/{0}', github.event.pull_request.head.ref) }}
             pr_title: ${{ format('Merge fix of {0}', github.event.pull_request.head.ref) }}
             pr_maintainer_modification: "true"
             pr_draft: "true"
