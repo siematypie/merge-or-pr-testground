@@ -1,11 +1,13 @@
-import * as core from "@actions/core";
+import { setFailed } from "@actions/core";
+import { getConfig } from "./get-config";
 import { mergeOrPr } from "./merge-or-pr";
 
 async function run() {
   try {
-    await mergeOrPr();
+    const config = getConfig();
+    await mergeOrPr(config);
   } catch (error) {
-    core.setFailed(error.message);
+    setFailed(error.message);
   }
 }
 run();

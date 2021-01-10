@@ -549,25 +549,6 @@ exports.debug = debug; // for test
 
 "use strict";
 
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -578,15 +559,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const core = __importStar(__webpack_require__(470));
+const core_1 = __webpack_require__(470);
+const get_config_1 = __webpack_require__(527);
 const merge_or_pr_1 = __webpack_require__(742);
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            yield merge_or_pr_1.mergeOrPr();
+            const config = get_config_1.getConfig();
+            yield merge_or_pr_1.mergeOrPr(config);
         }
         catch (error) {
-            core.setFailed(error.message);
+            core_1.setFailed(error.message);
         }
     });
 }
@@ -3747,6 +3730,45 @@ module.exports.Collection = Hook.Collection
 
 /***/ }),
 
+/***/ 527:
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.getConfig = void 0;
+const core_1 = __webpack_require__(470);
+const github_1 = __webpack_require__(469);
+function getConfig() {
+    return {
+        headToMerge: core_1.getInput("sha_to_merge") || github_1.context.sha,
+        targetBranch: core_1.getInput("target_branch", { required: true }),
+        repoToken: core_1.getInput("repo_token", { required: true }),
+        repoName: github_1.context.repo.repo,
+        repoOwner: github_1.context.repo.owner,
+        prConfig: getPrConfig()
+    };
+}
+exports.getConfig = getConfig;
+function getPrConfig() {
+    return {
+        mergeBranchName: core_1.getInput("merge_branch_name", { required: true }).replace("refs/heads/", ""),
+        title: core_1.getInput("pr_title", { required: true }),
+        body: core_1.getInput("pr_body"),
+        maintainerCanModify: getBool("pr_maintainer_modification"),
+        isDraft: getBool("pr_draft"),
+        assignedUser: core_1.getInput("pr_asignee"),
+        reviewer: core_1.getInput("pr_reviewer")
+    };
+}
+function getBool(key, options = undefined) {
+    const value = core_1.getInput(key, options);
+    return /^\s*(true|1)\s*$/i.test(value);
+}
+
+
+/***/ }),
+
 /***/ 539:
 /***/ (function(__unusedmodule, exports, __webpack_require__) {
 
@@ -4358,25 +4380,6 @@ exports.Deprecation = Deprecation;
 
 "use strict";
 
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -4388,44 +4391,67 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.mergeOrPr = void 0;
-const core = __importStar(__webpack_require__(470));
-const github = __importStar(__webpack_require__(469));
-function mergeOrPr() {
+const core_1 = __webpack_require__(470);
+const github_1 = __webpack_require__(469);
+function mergeOrPr(config) {
     return __awaiter(this, void 0, void 0, function* () {
-        const myToken = core.getInput("repo_token");
-        const headToMerge = core.getInput("sha_to_merge") || github.context.sha;
-        const target = core.getInput("target_branch");
-        const repo = github.context.repo;
-        const octokit = github.getOctokit(myToken);
-        const mergeBranch = core
-            .getInput("merge_branch_name")
-            .replace("refs/heads/", "");
-        let createPr = false;
+        const octokit = github_1.getOctokit(config.repoToken);
+        if (!(yield tryMerge(octokit, config))) {
+            yield createPr(octokit, config);
+        }
+    });
+}
+exports.mergeOrPr = mergeOrPr;
+function tryMerge(octokit, { repoName: repo, repoOwner: owner, targetBranch: base, headToMerge: head }) {
+    return __awaiter(this, void 0, void 0, function* () {
         try {
             yield octokit.repos.merge({
-                repo: repo.repo,
-                owner: repo.owner,
-                base: target,
-                head: headToMerge,
+                repo, owner, base, head
             });
+            core_1.setOutput("PR_CREATED", false);
+            return true;
         }
         catch (error) {
             if (error.name !== "HttpError" || error.status !== 409) {
                 throw Error(error);
             }
-            createPr = true;
-        }
-        if (createPr) {
-            yield octokit.git.createRef({
-                repo: repo.repo,
-                owner: repo.owner,
-                sha: headToMerge,
-                ref: `refs/heads/${mergeBranch}`,
-            });
+            return false;
         }
     });
 }
-exports.mergeOrPr = mergeOrPr;
+function createPr(octokit, config) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const branchRef = `refs/heads/${config.prConfig.mergeBranchName}`;
+        const prConfig = config.prConfig;
+        yield octokit.git.createRef({
+            repo: config.repoName,
+            owner: config.repoOwner,
+            sha: config.headToMerge,
+            ref: branchRef,
+        });
+        const pr = yield octokit.pulls.create({
+            repo: config.repoName,
+            owner: config.repoOwner,
+            head: branchRef,
+            title: prConfig.title,
+            body: prConfig.body,
+            draft: prConfig.isDraft,
+            maintainer_can_modify: prConfig.maintainerCanModify,
+            base: config.targetBranch
+        });
+        const assignedUser = prConfig.assignedUser;
+        if (assignedUser) {
+            yield octokit.issues.addAssignees({ repo: config.repoName, owner: config.repoOwner, issue_number: pr.data.number, assignees: [assignedUser] });
+        }
+        const reviewer = prConfig.reviewer;
+        if (reviewer) {
+            yield octokit.pulls.requestReviewers({ repo: config.repoName, owner: config.repoOwner, pull_number: pr.data.number, reviewers: [reviewer] });
+        }
+        core_1.setOutput("PR_CREATED", true);
+        core_1.setOutput("PR_NUMBER", pr.data.number);
+        core_1.setOutput("PR_URL", pr.data.url);
+    });
+}
 
 
 /***/ }),
