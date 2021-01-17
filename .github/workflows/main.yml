@@ -10,8 +10,8 @@ jobs:
       runs-on: ubuntu-latest
       if: |
         github.event.pull_request.merged == true && 
-        startsWith(event.pull_request.head.ref, 'hotfix/') && 
-        event.pull_request.head.ref == 'acceptance'
+        startsWith(github.event.pull_request.head.ref, 'hotfix/') && 
+        github.event.pull_request.head.ref == 'acceptance'
       steps:
         - uses: actions/checkout@v1
           name: Checkout
