@@ -75,5 +75,6 @@ async function createPr(octokit: InstanceType<typeof GitHub>, config: Config) {
   }
   setOutput("PR_CREATED", true);
   setOutput("PR_NUMBER", pr.data.number);
-  setOutput("PR_URL", pr.data.url);
+  setOutput("PR_URL", pr.data.html_url);
+  setOutput("MERGE_BRANCH_NAME", config.prConfig.mergeBranchName);
 }
