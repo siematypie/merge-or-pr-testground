@@ -24,7 +24,7 @@ jobs:
             pr_maintainer_modification: true
             pr_draft: true
             pr_asignee: ${{ github.event.pull_request.user.login }}
-            repo_token: ${{ secrets.GITHUB_TOKEN }} 
+            repo_token: ${{ secrets.ADMIN_TOKEN }} 
         - name: print-output
           run: echo "PR created ${{ steps.merge-or-pr.outputs.PR_CREATED  }} ${{ steps.merge-or-pr.outputs.PR_NUMBER }} ${{ steps.merge-or-pr.outputs.PR_URL }}"
         - uses: mshick/add-pr-comment@v1
