@@ -11,7 +11,7 @@ jobs:
       if: |
         github.event.pull_request.merged == true && 
         startsWith(github.event.pull_request.head.ref, 'hotfix/') && 
-        github.event.pull_request.head.ref == 'acceptance'
+        github.event.pull_request.base.ref == 'acceptance'
       steps:
         - uses: actions/checkout@v1
           name: Checkout
