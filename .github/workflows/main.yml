@@ -1,31 +1,24 @@
-# This is a basic workflow to help you get started with Actions
-
 name: merge test
 
-# Controls when the action will run. 
 on:
-  # Triggers the workflow on push or pull request events but only for the master branch
   pull_request:
     types: [ closed ]
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
    merge-or-pr:
-      # The type of runner that the job will run on
       runs-on: ubuntu-latest
-      if: github.event.pull_request.merged == true
-
-      # Steps represent a sequence of tasks that will be executed as part of the job
+      if: |
+        github.event.pull_request.merged == true && 
+        startsWith(event.pull_request.head.ref, 'hotfix/') && 
+        event.pull_request.head.ref == 'acceptance'
       steps:
         - uses: actions/checkout@v1
           name: Checkout
-        # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
         - uses: ./
           id: merge-or-pr
           with:
-            target_branch: "target-test"
+            target_branch: "development"
             sha_to_merge: ${{ github.event.pull_request.head.sha }}
             merge_branch_name: ${{ format('mergefix/{0}', github.event.pull_request.head.ref) }}
             pr_title: ${{ format('Merge fix of {0}', github.event.pull_request.head.ref) }}
