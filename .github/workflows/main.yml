@@ -29,7 +29,7 @@ jobs:
         - name: print-output
           run: echo "PR created ${{ steps.merge-or-pr.outputs.PR_CREATED  }} ${{ steps.merge-or-pr.outputs.PR_NUMBER }} ${{ steps.merge-or-pr.outputs.PR_URL }}"
         - uses: mshick/add-pr-comment@v1
-          if: ${{ !steps.merge-or-pr.outputs.PR_CREATED }}
+          if: steps.merge-or-pr.outputs.PR_CREATED == 'false'
           with:
             message: |
               **Hotfix merged successfully to acceptance and development**
@@ -37,7 +37,7 @@ jobs:
             repo-token-user-login: 'github-actions[bot]' # The user.login for temporary GitHub tokens
             allow-repeats: false # This is the default
         - uses: mshick/add-pr-comment@v1
-          if: steps.merge-or-pr.outputs.PR_CREATED 
+          if: steps.merge-or-pr.outputs.PR_CREATED == 'true'
           with:
             message: |
               **Hotfix merge to development failed**
