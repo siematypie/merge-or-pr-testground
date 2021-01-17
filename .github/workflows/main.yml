@@ -22,8 +22,8 @@ jobs:
             sha_to_merge: ${{ github.event.pull_request.head.sha }}
             merge_branch_name: ${{ format('mergefix/{0}', github.event.pull_request.head.ref) }}
             pr_title: ${{ format('Merge fix of {0}', github.event.pull_request.head.ref) }}
-            pr_maintainer_modification: "true"
-            pr_draft: "true"
+            pr_maintainer_modification: true
+            pr_draft: true
             pr_asignee: ${{ github.event.pull_request.user.login }}
             repo_token: ${{ secrets.GITHUB_TOKEN }} 
         - name: print-output
@@ -34,7 +34,6 @@ jobs:
             message: |
               **Hotfix merged successfully to acceptance and development**
             repo-token: ${{ secrets.GITHUB_TOKEN }}
-            repo-token-user-login: 'github-actions[bot]' # The user.login for temporary GitHub tokens
             allow-repeats: false # This is the default
         - uses: mshick/add-pr-comment@v1
           if: steps.merge-or-pr.outputs.PR_CREATED == 'true'
@@ -42,13 +41,12 @@ jobs:
             message: |
               **Hotfix merge to development failed**
               To fix it:
-              > `git fetch && git checkout ${{ format('mergefix/{0}', github.event.pull_request.head.ref) }}`
+              > `git fetch && git checkout ${{ steps.merge-or-pr.outputs.MERGE_BRANCH_NAME }}`
               > `git pull origin development && git merge development` <- Resolve conflicts
-              > `git push origin ${{ format('mergefix/{0}', github.event.pull_request.head.ref) }}`
-              > Go to ${{ steps.merge-or-pr.PR_URL }} and choose a reviewer 
+              > `git push origin ${{ steps.merge-or-pr.outputs.MERGE_BRANCH_NAME }}`
+              > Go to ${{ steps.merge-or-pr.outputs.PR_URL }} and choose a reviewer 
               > Merge changes 
             repo-token: ${{ secrets.GITHUB_TOKEN }}
-            repo-token-user-login: 'github-actions[bot]' # The user.login for temporary GitHub tokens
             allow-repeats: false # This is the default  
         
         

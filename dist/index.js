@@ -3746,7 +3746,7 @@ function getConfig() {
         repoToken: core_1.getInput("repo_token", { required: true }),
         repoName: github_1.context.repo.repo,
         repoOwner: github_1.context.repo.owner,
-        prConfig: getPrConfig()
+        prConfig: getPrConfig(),
     };
 }
 exports.getConfig = getConfig;
@@ -3758,7 +3758,7 @@ function getPrConfig() {
         maintainerCanModify: getBool("pr_maintainer_modification"),
         isDraft: getBool("pr_draft"),
         assignedUser: core_1.getInput("pr_asignee"),
-        reviewer: core_1.getInput("pr_reviewer")
+        reviewer: core_1.getInput("pr_reviewer"),
     };
 }
 function getBool(key, options = undefined) {
@@ -4402,11 +4402,14 @@ function mergeOrPr(config) {
     });
 }
 exports.mergeOrPr = mergeOrPr;
-function tryMerge(octokit, { repoName: repo, repoOwner: owner, targetBranch: base, headToMerge: head }) {
+function tryMerge(octokit, { repoName: repo, repoOwner: owner, targetBranch: base, headToMerge: head, }) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             yield octokit.repos.merge({
-                repo, owner, base, head
+                repo,
+                owner,
+                base,
+                head,
             });
             core_1.setOutput("PR_CREATED", false);
             return true;
@@ -4437,19 +4440,30 @@ function createPr(octokit, config) {
             body: prConfig.body,
             draft: prConfig.isDraft,
             maintainer_can_modify: prConfig.maintainerCanModify,
-            base: config.targetBranch
+            base: config.targetBranch,
         });
         const assignedUser = prConfig.assignedUser;
         if (assignedUser) {
-            yield octokit.issues.addAssignees({ repo: config.repoName, owner: config.repoOwner, issue_number: pr.data.number, assignees: [assignedUser] });
+            yield octokit.issues.addAssignees({
+                repo: config.repoName,
+                owner: config.repoOwner,
+                issue_number: pr.data.number,
+                assignees: [assignedUser],
+            });
         }
         const reviewer = prConfig.reviewer;
         if (reviewer) {
-            yield octokit.pulls.requestReviewers({ repo: config.repoName, owner: config.repoOwner, pull_number: pr.data.number, reviewers: [reviewer] });
+            yield octokit.pulls.requestReviewers({
+                repo: config.repoName,
+                owner: config.repoOwner,
+                pull_number: pr.data.number,
+                reviewers: [reviewer],
+            });
         }
         core_1.setOutput("PR_CREATED", true);
         core_1.setOutput("PR_NUMBER", pr.data.number);
-        core_1.setOutput("PR_URL", pr.data.url);
+        core_1.setOutput("PR_URL", pr.data.html_url);
+        core_1.setOutput("MERGE_BRANCH_NAME", config.prConfig.mergeBranchName);
     });
 }
 
