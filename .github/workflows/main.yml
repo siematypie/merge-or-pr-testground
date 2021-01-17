@@ -29,7 +29,7 @@ jobs:
         - name: print-output
           run: echo "PR created ${{ steps.merge-or-pr.outputs.PR_CREATED  }} ${{ steps.merge-or-pr.outputs.PR_NUMBER }} ${{ steps.merge-or-pr.outputs.PR_URL }}"
         - uses: mshick/add-pr-comment@v1
-          if: steps.merge-or-pr.PR_CREATED == 'false'
+          if: steps.merge-or-pr.PR_CREATED == false
           with:
             message: |
               **Changes merged successfully to development**
