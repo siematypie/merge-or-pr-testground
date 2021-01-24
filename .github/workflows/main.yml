@@ -1,22 +1,21 @@
-name: merge test
+name: Merge hotfix or create pr # Displayed on Github Actions page, if ommited, defaults to the file name
 
 on:
-  pull_request:
-    types: [ closed ]
-  workflow_dispatch:
+  pull_request:   #Event on which workflow will run, in this case pull request
+    types: [ closed ] #Additional specificetion for the event, in this case it will run when pull request closes
 
-jobs:
+jobs: #workflow can be running multiple jobs - they will run paraller to each other
    merge-or-pr:
-      runs-on: ubuntu-latest
-      if: |
-        github.event.pull_request.merged == true && 
-        startsWith(github.event.pull_request.head.ref, 'hotfix/') && 
-        github.event.pull_request.base.ref == 'acceptance'
+      runs-on: ubuntu-latest #lets you define the OS (Operating System) the workflow should run on
+      if: | #Additional requirements for the job to run based on event data
+        github.event.pull_request.merged == true && #pull request should be merged
+        startsWith(github.event.pull_request.head.ref, 'hotfix/') && #pull request branche should start with hotfix/, using build-in workflow start with function
+        github.event.pull_request.base.ref == 'acceptance' #pull request has to target acceptance
       steps:
-        - name: Merge or PR
-          uses: siematypie/merge-or-pr@v1.0
-          id: merge-or-pr
-          with:
+        - name: Merge or PR #displayed on Github action page
+          uses: siematypie/merge-or-pr@v1.0 #specify that step is using action from market place
+          id: merge-or-pr #thanks to id this step can be referenced by other steps, for example to get output
+          with: #action parameters
             target_branch: "development"
             sha_to_merge: ${{ github.event.pull_request.head.sha }}
             merge_branch_name: ${{ format('mergefix/{0}', github.event.pull_request.head.ref) }}
@@ -25,8 +24,9 @@ jobs:
             pr_draft: true
             pr_asignee: ${{ github.event.pull_request.user.login }}
             repo_token: ${{ secrets.ADMIN_TOKEN }} 
-        - name: print-output
-          run: echo "PR created ${{ steps.merge-or-pr.outputs.PR_CREATED  }} ${{ steps.merge-or-pr.outputs.PR_NUMBER }} ${{ steps.merge-or-pr.outputs.PR_URL }}"
+        - name: print-output #second step, runs directly in bash
+          run: echo "PR created ${{ steps.merge-or-pr.outputs.PR_CREATED  }} ${{ steps.merge-or-pr.outputs.PR_NUMBER }} ${{ steps.merge-or-pr.outputs.PR_URL }}" #prints outputs of the job with id merge-or-pr
+        
         - uses: mshick/add-pr-comment@v1
           if: steps.merge-or-pr.outputs.PR_CREATED == 'false'
           with:
