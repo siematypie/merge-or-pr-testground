@@ -1,0 +1,17 @@
+name: Merge hotfix or create pr # Displayed on Github Actions page, if ommited, defaults to the file name
+
+on:
+  workflow_dispatch:
+
+jobs: #workflow can be running multiple jobs - they will run paraller to each other
+  send_slack:
+    runs-on: ubuntu-latest #lets you define the OS (Operating System) the workflow should run on
+    steps:
+    - name: Send GitHub Action trigger data to Slack workflow
+      id: slack
+      uses: slackapi/slack-github-action@v1.14.0
+      with:
+        channel-id: 'C01GVMQ92PR'  # Slack channel id to post message
+        slack-message: 'posting from a github action!'
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
