@@ -17,7 +17,7 @@ jobs:
         id: getpr
         with:
           script: |
-             [ 
+             return [ 
                       {
                         color: "#36a64f",
                         author_name: "siematypie",
