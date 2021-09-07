@@ -1,0 +1,16 @@
+on: workflow_dispatch:
+
+jobs:
+  welcome:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v4
+        with:
+          script: |
+            // Get a list of all issues created by the PR opener
+            // See: https://octokit.github.io/rest.js/#pagination
+            const opts = github.pulls.list.endpoint.merge({
+              state: 'open'
+            })
+            const pulls = await github.paginate(opts)
+            console.log(pulls)
