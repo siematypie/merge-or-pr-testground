@@ -8,7 +8,7 @@ jobs: #workflow can be running multiple jobs - they will run paraller to each ot
    merge-or-pr:
       runs-on: ubuntu-latest #lets you define the OS (Operating System) the workflow should run on
       if: | #Additional requirements for the job to run based on event data
-        github.event.pull_request.merged == true && #pull request should be merged
+        github.event.pull_request.merged == true &&
         startsWith(github.event.pull_request.head.ref, 'hotfix/') &&
         github.event.pull_request.base.ref == 'acceptance'
       steps:
