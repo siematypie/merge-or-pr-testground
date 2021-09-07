@@ -14,8 +14,8 @@ jobs:
             console.log(context.repo.owner);
             const opts = github.pulls.list.endpoint.merge({
               state: 'open',
-              context.repo.owner,
-              context.repo.repo
+              owner: context.repo.owner,
+              repo: context.repo.repo
             });
             const pulls = await github.paginate(opts);
             console.log(pulls);
