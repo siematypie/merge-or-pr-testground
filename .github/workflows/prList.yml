@@ -35,7 +35,7 @@ jobs:
                     {
                         color: "#36a64f",
                         author_name: p.assignee.login,
-                        author_icon: p.assignee.url,
+                        author_icon: p.assignee.avatar_url,
                         title: p.title,
                         title_link: p.html_url,
                         footer: "Created at",
