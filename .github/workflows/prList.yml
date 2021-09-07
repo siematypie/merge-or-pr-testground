@@ -11,7 +11,9 @@ jobs:
             // Get a list of all issues created by the PR opener
             // See: https://octokit.github.io/rest.js/#pagination
             const opts = github.pulls.list.endpoint.merge({
-              state: 'open'
+              state: 'open',
+              context.owner,
+              context.repo
             })
             const pulls = await github.paginate(opts)
             console.log(pulls)
