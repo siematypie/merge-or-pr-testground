@@ -1,0 +1,37 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Slack
+
+# Controls when the workflow will run
+on:
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  slack-notifications:
+    runs-on: ubuntu-20.04
+    name: Sends a message to Slack when a push, a pull request or an issue is made
+    steps:
+      - uses: actions/github-script@v4
+        id: getpr
+        with:
+          script: |
+             return [ { title: "hello", "mrkdwn_in": ["footer"], footer: "Created at <!date^1392734382^{date} at {time}|PR creation date>" }];
+      - name: Send message to Slack API
+        if: ${{steps.getpr.outputs.result != ''}}
+        uses: archive/github-actions-slack@v2.0.0
+        id: notify
+        with:
+          slack-bot-user-oauth-access-token: ${{ secrets.SLACK_BOT_TOKEN }}
+          slack-channel: C01GVMQ92PR
+          slack-text: "My slack message"
+          slack-optional-attachments: ${{steps.getpr.outputs.result}}
+      - name: Report slack error
+        if: ${{steps.getpr.outputs.result != '' && fromJSON(steps.notify.outputs.slack-result).response.ok != true}}
+        uses: actions/github-script@v4
+        with:
+          script: |
+            core.setFailed('Slack API returned error!');
+            console.log('${{toJSON(steps.notify.outputs.slack-result)}}')
+      
