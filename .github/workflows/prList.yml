@@ -1,0 +1,67 @@
+on: 
+  schedule: 
+    - cron: '0 8,15 * * 1-5'
+  workflow_dispatch:
+
+jobs:
+  welcome:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch mergefixes
+        uses: actions/github-script@v4
+        id: fetch-prs
+        with:
+          script: |
+            
+            const isOlderThanTwoHours = (pullRequest) => {
+              const createdAt = Date.parse(pullRequest.created_at)
+                const HOUR = 1000 * 60 * 60;
+                const twoHoursAgo = Date.now() - HOUR * 2;
+                return createdAt < twoHoursAgo;
+            };
+            
+            const isMergeFix = (pullRequest) => 
+             pullRequest.head.ref.startsWith('mergefix/');
+
+            const opts = github.pulls.list.endpoint.merge({
+              state: 'open',
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              sort: 'created',
+              direction: 'asc',
+              per_page: 100
+            });
+            
+            const pulls = await github.paginate(opts);
+            const validMergeFixes = pulls
+              .filter(p => isMergeFix(p) && isOlderThanTwoHours(p))
+              .map(p => (
+                    {
+                        color: "#e60202",
+                        author_name: p.assignee.login,
+                        author_icon: p.assignee.avatar_url,
+                        title: p.title,
+                        title_link: p.html_url,
+                        footer: `Created at <!date^${Date.parse(p.created_at) / 1000}^{date_short_pretty} at {time}|PR creation date>`,
+                        mrkdwn_in: ["footer"]
+                    }
+              ));
+            if (validMergeFixes.length === 0) return;
+            return validMergeFixes;
+            
+      - name: Send Slack notification
+        if: ${{steps.fetch-prs.outputs.result != ''}}
+        uses: archive/github-actions-slack@v2.0.0
+        id: notify
+        with:
+          slack-bot-user-oauth-access-token: ${{ secrets.SLACK_BOT_TOKEN }}
+          slack-channel: C01GVMQ92PR
+          slack-text: "Following mergefixes older than 2 hours needs to be resolved:"
+          slack-optional-attachments: ${{steps.fetch-prs.outputs.result}}
+      - name: Report slack error
+        if: ${{steps.fetch-prs.outputs.result != '' && fromJSON(steps.notify.outputs.slack-result).ok != true}}
+        uses: actions/github-script@v4
+        with:
+          script: |
+            core.setFailed('Slack API returned error!');
+            console.log('${{steps.notify.outputs.slack-result}}')
