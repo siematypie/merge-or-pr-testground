@@ -9,8 +9,8 @@ jobs: #workflow can be running multiple jobs - they will run paraller to each ot
       runs-on: ubuntu-latest #lets you define the OS (Operating System) the workflow should run on
       if: | #Additional requirements for the job to run based on event data
         github.event.pull_request.merged == true && #pull request should be merged
-        startsWith(github.event.pull_request.head.ref, 'hotfix/') && #pull request branche should start with hotfix/, using build-in workflow start with function
-        github.event.pull_request.base.ref == 'acceptance' #pull request has to target acceptance
+        startsWith(github.event.pull_request.head.ref, 'hotfix/') &&
+        github.event.pull_request.base.ref == 'acceptance'
       steps:
         - name: Merge or PR #displayed on Github action page
           uses: siematypie/merge-or-pr@v1.0 #specify that step is using action from market place
