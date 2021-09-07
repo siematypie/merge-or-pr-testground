@@ -31,7 +31,7 @@ jobs:
             const pulls = await github.paginate(opts);
             const validMergeFixes = pulls
               .filter(p => isMergeFix(p) && isOlderThanTwoHours(p))
-              .map(p => ({
+              .map(p => (
                     {
                         color: "#36a64f",
                         author_name: p.assignee.login,
@@ -41,7 +41,7 @@ jobs:
                         footer: "Created at",
                         ts: Math.floor(Date.parse(p.created_at) / 1000)
                     }
-              }));
+              ));
             if (validMergeFixes.length === 0) return;
             return validMergeFixes;
             
