@@ -26,7 +26,7 @@ jobs:
         id: notify
         with:
           slack-bot-user-oauth-access-token: ${{ secrets.SLACK_BOT_TOKEN }}
-          slack-channel: C01GVMQ92PR
+          slack-channel: C01FVMQ92PR
           slack-text: "My slack message"
           slack-optional-attachments: ${{steps.getpr.outputs.result}}
       - name: Report slack error
