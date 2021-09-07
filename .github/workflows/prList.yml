@@ -8,8 +8,18 @@ jobs:
       - uses: actions/github-script@v4
         with:
           script: |
-            // Get a list of all issues created by the PR opener
-            // See: https://octokit.github.io/rest.js/#pagination
+            
+            const isOlderThanTwoHours = (pullRequest) => {
+              const createdAt = Date.parse(pullRequest.created_at)
+                const HOUR = 1000 * 60 * 60;
+                const twoHoursAgo = Date.now() - HOUR * 2;
+                return createdAt < twoHoursAgo;
+            };
+            
+            const isMergeFix = (pullRequest) => {
+              pullRequest.head.ref.startsWith('mergefix/');
+            }
+            
             console.log(context.repo.repo);
             console.log(context.repo.owner);
             const opts = github.pulls.list.endpoint.merge({
@@ -17,5 +27,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo
             });
+            
             const pulls = await github.paginate(opts);
-            console.log(pulls);
+            const validMergeFixes = pulls.filter(p => isMergeFix(p) && isOlderThanTwoHours(p))
+            console.log(validMergeFixes);
