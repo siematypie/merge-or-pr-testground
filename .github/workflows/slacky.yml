@@ -39,5 +39,6 @@ jobs:
           slack-bot-user-oauth-access-token: ${{ secrets.SLACK_BOT_TOKEN }}
           slack-channel: C01GVMQ92PR
           slack-text: Hello! Event "${{ github.event_name }}" in "${{ github.repository }}" 🤓
+          slack-optional-attachments: ${{fromJSON(steps.getpr.outputs.result).pulls}}
       - name: Result from "Send Message"
         run: echo "The result was ${{ steps.notify.outputs.slack-result }}"
