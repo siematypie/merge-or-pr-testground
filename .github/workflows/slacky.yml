@@ -30,17 +30,10 @@ jobs:
           slack-text: "My slack message"
           slack-optional-attachments: ${{steps.getpr.outputs.result}}
       - name: Report slack error
-        if: ${{steps.getpr.outputs.result != ''}}
-        uses: actions/github-script@v4
-        with:
-          script: |
-            console.log('${{toJSON(steps.notify.outputs.slack-result)}}');
-
-      - name: Report slack error
         if: ${{steps.getpr.outputs.result != '' && fromJSON(steps.notify.outputs.slack-result).response.ok != true}}
         uses: actions/github-script@v4
         with:
           script: |
             core.setFailed('Slack API returned error!');
-            console.log("${{steps.notify.outputs.slack-result}}")
+            console.log('${{toJSON(steps.notify.outputs.slack-result)}}')
       
