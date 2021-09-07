@@ -49,7 +49,7 @@ jobs: #workflow can be running multiple jobs - they will run paraller to each ot
             allow-repeats: false # This is the default
         - name: Create pr slack attachment
           id: create-attachment
-          if: ${{steps.merge-or-pr.outputs.PR_CREATED == 'true'
+          if: steps.merge-or-pr.outputs.PR_CREATED == 'true'
           uses: actions/github-script@v4
           with:
             script: |
