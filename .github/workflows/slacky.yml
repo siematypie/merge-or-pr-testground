@@ -34,8 +34,7 @@ jobs:
         uses: actions/github-script@v4
         with:
           script: |
-            console.log("${{toJSON(steps.notify.outputs.slack-result)}}");
-            console.log("${{fromJSON(steps.notify.outputs.slack-result).response.ok}}")
+            console.log('${{toJSON(steps.notify.outputs.slack-result)}}');
 
       - name: Report slack error
         if: ${{steps.getpr.outputs.result != '' && fromJSON(steps.notify.outputs.slack-result).response.ok != true}}
