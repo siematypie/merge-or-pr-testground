@@ -17,7 +17,7 @@ jobs:
         id: getpr
         with:
           script: |
-             return [ { title: "hello" }];
+             return [ { title: "hello", "mrkdwn_in": ["footer"], footer: "Created at <!date^1392734382^{date} at {time}|PR creation date>", }];
       - name: Get result
         run: echo "${{toJSON(steps.getpr.outputs.result)}}"
       - name: Send message to Slack API
