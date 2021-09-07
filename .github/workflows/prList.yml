@@ -5,8 +5,9 @@ jobs:
   welcome:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@v4
-        id: getprs
+      - name: Fetch mergefixes
+        uses: actions/github-script@v4
+        id: fetch-prs
         with:
           script: |
             
@@ -45,17 +46,17 @@ jobs:
             if (validMergeFixes.length === 0) return;
             return validMergeFixes;
             
-      - name: Send message to Slack API
-        if: ${{steps.getprs.outputs.result != ''}}
+      - name: Send Slack notification
+        if: ${{steps.fetch-prs.outputs.result != ''}}
         uses: archive/github-actions-slack@v2.0.0
         id: notify
         with:
           slack-bot-user-oauth-access-token: ${{ secrets.SLACK_BOT_TOKEN }}
           slack-channel: C01GVMQ92PR
           slack-text: "Following mergefixes older than 2 hours needs to be resolved:"
-          slack-optional-attachments: ${{steps.getprs.outputs.result}}
+          slack-optional-attachments: ${{steps.fetch-prs.outputs.result}}
       - name: Report slack error
-        if: ${{steps.getprs.outputs.result != '' && fromJSON(steps.notify.outputs.slack-result).ok != true}}
+        if: ${{steps.fetch-prs.outputs.result != '' && fromJSON(steps.notify.outputs.slack-result).ok != true}}
         uses: actions/github-script@v4
         with:
           script: |
