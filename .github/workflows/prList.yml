@@ -35,13 +35,13 @@ jobs:
               .filter(p => isMergeFix(p) && isOlderThanTwoHours(p))
               .map(p => (
                     {
-                        color: "#36a64f",
+                        color: "#e60202",
                         author_name: p.assignee.login,
                         author_icon: p.assignee.avatar_url,
                         title: p.title,
                         title_link: p.html_url,
-                        footer: "Created at",
-                        ts: Math.floor(Date.parse(p.created_at) / 1000)
+                        footer: `Created at <!date^${Date.parse(p.created_at) / 1000}^{date_short_pretty} at {time}|PR creation date>`,
+                        mrkdwn_in: ["footer"]
                     }
               ));
             if (validMergeFixes.length === 0) return;
