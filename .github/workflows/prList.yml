@@ -20,13 +20,14 @@ jobs:
             
             const isMergeFix = (pullRequest) => 
              pullRequest.head.ref.startsWith('mergefix/');
-            
-            console.log(context.repo.repo);
-            console.log(context.repo.owner);
+
             const opts = github.pulls.list.endpoint.merge({
               state: 'open',
               owner: context.repo.owner,
-              repo: context.repo.repo
+              repo: context.repo.repo,
+              sort: 'created',
+              direction: 'asc',
+              per_page: 100
             });
             
             const pulls = await github.paginate(opts);
