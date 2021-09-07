@@ -31,7 +31,7 @@ jobs:
                   ]
             }
       - name: Get result
-        run: echo "${{steps.set-result.outputs.result.pulls}}"
+        run: echo "${{toJSON(steps.getpr.outputs.result.pulls)}}"
       - name: Send message to Slack API
         uses: archive/github-actions-slack@v2.0.0
         id: notify
