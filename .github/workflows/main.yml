@@ -60,7 +60,7 @@ jobs: #workflow can be running multiple jobs - they will run paraller to each ot
                         author_icon: "${{ github.event.pull_request.user.avatar_url }}",
                         title:  "${{ format('Merge fix of {0}', github.event.pull_request.head.ref) }}",
                         title_link: "${{ steps.merge-or-pr.outputs.PR_URL }}",
-                        footer: `Created at <!date^${Date.now() / 1000}^{date_short_pretty} at {time}|PR creation date>`,
+                        footer: `Created at <!date^${Math.floor(Date.now() / 1000)}^{date_short_pretty} at {time}|PR creation date>`,
                         mrkdwn_in: ["footer"]
                 }
               ];
