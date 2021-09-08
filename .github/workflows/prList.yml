@@ -40,8 +40,8 @@ jobs:
               .map(p => (
                     {
                         color: "#e60202",
-                        author_name: p.assignee?.login ?? 'Unknown assignee',
-                        author_icon: p.assignee?.avatar_url,
+                        author_name: (p.assignee && p.assignee.login) || 'Unknown assignee',
+                        author_icon: p.assignee && p.assignee.avatar_url,
                         title: p.title,
                         title_link: p.html_url,
                         footer: `Created at <!date^${Date.parse(p.created_at) / 1000}^{date_short_pretty} at {time}|PR creation date>`,
