@@ -18,7 +18,7 @@ jobs:
         id: review_check
         with:
           script: |
-            await octokit.request('POST /repos/siematypie/merge-or-pr-testground/check-runs', {
+            await github.request('POST /repos/siematypie/merge-or-pr-testground/check-runs', {
               owner: 'siematypie',
               repo: 'merge-or-pr-testground',
               name: 'mighty_merge',
