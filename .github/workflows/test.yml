@@ -28,6 +28,8 @@ jobs:
               head_sha: context.payload.pull_request.head.sha,
               status: 'completed',
               started_at: formatDate(),
+              conclusion: 'success',
+
               output: {
                 title: 'Mighty Readme report',
                 summary: 'some random text',
