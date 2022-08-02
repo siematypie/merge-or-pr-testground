@@ -18,6 +18,9 @@ jobs:
         id: review_check
         with:
           script: |
+            const formatDate = () => {
+              return new Date().toISOString();
+            };
             await github.request('POST /repos/siematypie/merge-or-pr-testground/check-runs', {
               owner: 'siematypie',
               repo: 'merge-or-pr-testground',
