@@ -27,7 +27,7 @@ jobs:
               repo: 'merge-or-pr-testground',
               name: 'mighty_merge',
               head_sha: context.payload.pull_request.head.sha,
-              status: 'completed',
+              status: 'action_required',
               started_at: formatDate(),
               conclusion: 'stale',
 
