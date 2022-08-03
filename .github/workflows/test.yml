@@ -27,9 +27,9 @@ jobs:
               repo: 'merge-or-pr-testground',
               name: 'mighty_merge',
               head_sha: context.payload.pull_request.head.sha,
-              status: 'action_required',
+              status: 'completed',
               started_at: formatDate(),
-              conclusion: 'stale',
+              conclusion: 'action_required',
 
               output: {
                 title: 'Mighty Readme report',
